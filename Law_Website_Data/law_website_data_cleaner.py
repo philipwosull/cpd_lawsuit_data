@@ -18,11 +18,11 @@ ALL_POLICE_SUITS_CSV = "police_lawsuits_2008_to_2018.csv"
 CAUSES = {
     "False Arrest":['FALSE ARREST'],
     "Excessive Force": ['EXCESSIVE FORCE/MINOR', 'EXCESSIVE FORCE', \
-    	'EXCESSIVE FORCE/SERIOUS', 'FALSE ARREST/EXCESSIVE FORCE',\
+        'EXCESSIVE FORCE/SERIOUS', 'FALSE ARREST/EXCESSIVE FORCE',\
         'EXCESSIVE FORCE/TASER'],
     "MVA/Property Damage": ['MVA/CITY VEHICLE', 'MVA - PROPERTY DAMAGE ONLY',\
-    		'DAMAGE TO PROPERTY DURING OPERATIONS', 'PROPERTY DAMAGE/MVA',\
-    		'MVA - CITY VEHICLE','STRUCK WHILE PARKED','SIDESWIPE COLLISION',\
+            'DAMAGE TO PROPERTY DURING OPERATIONS', 'PROPERTY DAMAGE/MVA',\
+            'MVA - CITY VEHICLE','STRUCK WHILE PARKED','SIDESWIPE COLLISION',\
            'MVA/ER-POLICE', 'INTER ACCIDENT-OUR UNIT STRAIGHT AHEAD',\
            'REAR-ENDED CLAIMANT', 'MVA/PEDESTRIAN','BACKING OR ROLLING BACK',\
            'MVA/PROPERTY DAMAGE','PURSUIT/OFFENDER ACCIDENT',\
@@ -99,32 +99,32 @@ def load_annual_sheet(excel_file, sheet_name):
     return df
 
 def combine_all_dfs():
-	'''
+    '''
     Loads and merges dataframes for each year in year range
     plus 2008 and saves it to a CSV with all suits and just 
     police ones
 
     Inputs:
-		Nothing
+        Nothing
 
     Returns:
         Nothing
-	'''
-	df_total = load_annual_sheet(FILE_LOCATION+ "2008" + FILE_BASE, EXCEL_SHEET)
-	#Adds the data for the years in YEAR_RANGE
-	for year in YEAR_RANGE:
-		full_file_name = FILE_LOCATION + str(year) + FILE_BASE
-		df_total = df_total.append(load_annual_sheet(\
-			full_file_name, EXCEL_SHEET), ignore_index=True, sort=False)
+    '''
+    df_total = load_annual_sheet(FILE_LOCATION+ "2008" + FILE_BASE, EXCEL_SHEET)
+    #Adds the data for the years in YEAR_RANGE
+    for year in YEAR_RANGE:
+        full_file_name = FILE_LOCATION + str(year) + FILE_BASE
+        df_total = df_total.append(load_annual_sheet(\
+            full_file_name, EXCEL_SHEET), ignore_index=True, sort=False)
 
-	#Applies the cause_map to police cases
-	police_cases = df_total['City Department Involved'] == 'POLICE'
-	df_total.loc[police_cases, 'Primary Cause'].map(CAUSE_MAP)
-	df_total.loc[police_cases, 'Primary Cause'].fillna('Other', inplace=True)
-	#Saves the cases to csvs
-	df_total.to_csv(ALL_SUITS_CSV_NAME, index=False)
-	df_total[police_cases].to_csv(ALL_POLICE_SUITS_CSV, index=False)
-	
+    #Applies the cause_map to police cases
+    police_cases = df_total['City Department Involved'] == 'POLICE'
+    df_total.loc[police_cases, 'Primary Cause'].map(CAUSE_MAP)
+    df_total.loc[police_cases, 'Primary Cause'].fillna('Other', inplace=True)
+    #Saves the cases to csvs
+    df_total.to_csv(ALL_SUITS_CSV_NAME, index=False)
+    df_total[police_cases].to_csv(ALL_POLICE_SUITS_CSV, index=False)
+    
 
 if __name__ == '__main__':
     combine_all_dfs()
