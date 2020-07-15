@@ -66,7 +66,8 @@ def load_annual_sheet(excel_file, sheet_name):
         print('The file could not be found, please try again')
         return None
 
-    dtype_dict = {'Payment Amount':float, 'Fees and Costs':float, "City Department Involved":str}
+    dtype_dict = {'Payment Amount':float, 'Fees and Costs':float, "City Department Involved":str,
+    "Case Number": str}
     df = pd.read_excel(excel_file, sheet_name=sheet_name, dtype=dtype_dict)
     
     #Deals with minor formatting issues
@@ -96,7 +97,31 @@ def load_annual_sheet(excel_file, sheet_name):
     df['Total Paid'] = df['Fees and Costs'] + df['Payment Amount']
     df['Total Paid(millions)'] = df['Total Paid'] / 1000000
     
+    #Adds the court/division the action took place in
+    df['Case Number'].fillna('missing', inplace=True)
+    df['Court'] = 'other'
+    df['Division'] = 'other'
+    df = df.apply(venue_finder, axis=1, result_type='expand')
     return df
+
+def venue_finder(row):
+    '''
+    Takes a row of a payments dataframe and puts the appropriate 
+    court and division for the instance
+    '''
+    if 'L' in row['Case Number']:
+        row['Court'] = 'Circuit Court of Cook County'
+        row['Division'] = 'Law Division'
+    elif 'M' in row['Case Number']:
+        row['Court'] = 'Circuit Court of Cook County'
+        row['Division'] = 'Civil Division'
+    elif 'C' in row['Case Number']:
+        row['Court'] = 'US District Court for the Northern District of Illinois'
+        row['Division'] = 'Civil Case'
+    return row    
+
+
+
 
 def combine_all_dfs():
     '''
@@ -124,6 +149,7 @@ def combine_all_dfs():
     #Saves the cases to csvs
     df_total.to_csv(ALL_SUITS_CSV_NAME, index=False)
     df_total[police_cases].to_csv(ALL_POLICE_SUITS_CSV, index=False)
+    
     
 
 if __name__ == '__main__':

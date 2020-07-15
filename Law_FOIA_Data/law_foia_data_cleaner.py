@@ -1,52 +1,39 @@
 # This file cleans law department data given as response to FOIA requests
 
-
 import pandas as pd
 import numpy as np
 from os import path
 
 #Years to load files for - 2008 excluded
 YEAR_RANGE = range(2009, 2019)
+PENDING_POLICE_CASES_EXCEL = "Raw_FOIA_Data/4.F_Pending_Police_Cases_Report.xlsx"
+PENDING_EXCEL_SHEET = "Attorney Caseload"
 EXCEL_SHEET = "Payments"
 FILE_LOCATION = "Law_Website_Raw_Data/"
 FILE_BASE = "_Payments.xlsx"
 ALL_SUITS_CSV_NAME = "all_lawsuits_2008_to_2018.csv"
 ALL_POLICE_SUITS_CSV = "police_lawsuits_2008_to_2018.csv"
 #Dictionary Reducing the Primary cause catagories for police lawsuits
-CAUSES = {
-    "False Arrest":['FALSE ARREST'],
-    "Excessive Force": ['EXCESSIVE FORCE/MINOR', 'EXCESSIVE FORCE', \
-    	'EXCESSIVE FORCE/SERIOUS', 'FALSE ARREST/EXCESSIVE FORCE',\
-        'EXCESSIVE FORCE/TASER'],
-    "MVA/Property Damage": ['MVA/CITY VEHICLE', 'MVA - PROPERTY DAMAGE ONLY',\
-    		'DAMAGE TO PROPERTY DURING OPERATIONS', 'PROPERTY DAMAGE/MVA',\
-    		'MVA - CITY VEHICLE','STRUCK WHILE PARKED','SIDESWIPE COLLISION',\
-           'MVA/ER-POLICE', 'INTER ACCIDENT-OUR UNIT STRAIGHT AHEAD',\
-           'REAR-ENDED CLAIMANT', 'MVA/PEDESTRIAN','BACKING OR ROLLING BACK',\
-           'MVA/PROPERTY DAMAGE','PURSUIT/OFFENDER ACCIDENT',\
-            'CPD V BACKED INTO CL VEH FRONT RIGHT DAMAGE CL VEH SCHNEIDER KATHY',\
-            'CPD VEH HIT CL VEH UNSPECIFIED VEH DAMAGE MENDEZ JEANNE R',\
-            'CPD V HIT CL PARKED VEH LEFT SIDE DAMAGE CL VEH HIGGS MARIA',\
-            'CPD HIT CL VEH IN REAR REAR END DAMAGE CL VEH TIRADO GLORIA',\
-            'CPD V HIT CL VEH LEFT SIDE DAMAGE CL VEH',\
-            'CPD PUSH V INTO CL VEH LEFT SIDE DAMAGE CL VEH SCHOESSLING JOHN',\
-            'CPD RESCUE-CL BOAT DMGD GASH IN CL BOAT/DMG ANCHR',\
-            'CL VEH HIT CPD VEH FRONT END DMG CL VEH BOKUNIEWICZ JOSEPH',\
-            'CPD VEH REARENDED CL VEH UNDISCLOSED INJURIES FLAHERTY KENNETH W','HEAD ON  COLLISION',\
-            'CPD PURSUIT 3 BROKEN WINDOWS', 'INTERSECTION COLLISION',\
-            'CPD B/INTO CL PARKED VEH MINOR SCRATCHES FRONT END UNKN UNKN',\
-            'INTER ACCIDENT-OUR UNIT TURNING LEFT','VEHICLE COLLISION - CITY VEHICLE','PROPERTY DAMAGE - OTHER',\
-            'PROPERTY DAMAGED DURING OPERATIONS', 'BICYCLE ACCIDENTS','COLLIDED WITH FIXED OBJECT','MVA - PEDESTRIAN',\
-            'MVA/ER - POLICE', 'PROPERTY DAMAGE - OTHER', 'PROPERTY DAMAGED DURING OPERATIONS','PROPERTY DAMAGE/OTHER',\
-            'CLAIMANT HIT FOREIGN OBJECT ON ROAD', 'CLAIMANT REAR-ENDED OUR UNIT','VEHICLE DAMAGE/LOSS POUND',\
-            'PURSUIT - OFFENDER ACCIDENT','MVA - PROPERTY DAMAGE BIKE','PASSING AND TURNING ACCIDENT','PURSUIT OFFENDER ACCIDENT',\
-            'PURSUIT/SQUAD ACCIDENT','CPDSA'],
-    "Illegal Search/Seizure": ['ILLEGAL SEARCH/SEIZURE', 'ILLEGAL SEARCH & SEIZURE'],
-    "Extended Detention/Malicious Prosecution": ['EXTENDED DETENTION/MALICIOUS PROSECUTION','EXCESSIVE FORCE/MALICIOUS PROSECUTION'],
-    'Burge-Related': ['EXCESSIVE FORCE/SERIOUS/BURGE REPARATIONS','BURGE REPARATIONS']
-}
-#Dictionary to update dataframes
-CAUSE_MAP = {m:k for k, v in CAUSES.items() for m in v}
+
+def process_pending_cases():
+    '''
+    Processes the pending police cases excel file
+    saves the claned version to a csv and returns 
+    the file as a dataframe
+    '''
+    pending_df = pd.read_excel(PENDING_POLICE_CASES_EXCEL,"Attorney Caseload", header = 1)
+    pending_df.drop(len(pending_df)-1, inplace=True)
+    #Clean up allegation
+    pending_df["Allegation"] = pending_df["Allegation"].str.replace('Dispute:General:Police Matters:', '')
+    #Make date format better   
+    pending_df["Incident Date"] = pd.to_datetime(pending_df["Incident Date"])
+    pending_df["Incident Year"] = pending_df["Incident Date"].dt.year
+    pending_df["Incident Month"] = pending_df["Incident Date"].dt.month
+    pending_df["Incident Day"] = pending_df["Incident Date"].dt.day
+    
+    return pending_df
+
+
 
 def load_annual_sheet(excel_file, sheet_name):
     '''
