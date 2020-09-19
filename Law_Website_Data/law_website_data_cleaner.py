@@ -13,7 +13,8 @@ EXCEL_SHEET = "Payments"
 FILE_LOCATION = "Law_Website_Raw_Data/"
 FILE_BASE = "_Payments.xlsx"
 ALL_SUITS_CSV_NAME = "all_lawsuits_2008_to_2018.csv"
-ALL_POLICE_SUITS_CSV = "police_lawsuits_2008_to_2018.csv"
+ALL_POLICE_SUITS_CSV = "police_lawsuits_2008_to_2018.xlsx"
+FEDERAL_SUITS_CSV = "federal_police_lawsuits_2008_to_2018.csv"
 #Dictionary Reducing the Primary cause catagories for police lawsuits
 CAUSES = {
     "False Arrest":['FALSE ARREST'],
@@ -61,7 +62,7 @@ def load_annual_sheet(excel_file, sheet_name):
     Returns
         A pandas dataframe
     '''
-    
+    print(excel_file)
     if not path.exists(excel_file):
         print('The file could not be found, please try again')
         return None
@@ -96,12 +97,14 @@ def load_annual_sheet(excel_file, sheet_name):
     df['Fees and Costs(millions)'] = df['Fees and Costs'] / 1000000
     df['Total Paid'] = df['Fees and Costs'] + df['Payment Amount']
     df['Total Paid(millions)'] = df['Total Paid'] / 1000000
-    
+    '''
     #Adds the court/division the action took place in
     df['Case Number'].fillna('missing', inplace=True)
     df['Court'] = 'other'
     df['Division'] = 'other'
+    df['Year Filed'] = 0
     df = df.apply(venue_finder, axis=1, result_type='expand')
+    '''
     return df
 
 def venue_finder(row):
@@ -115,9 +118,22 @@ def venue_finder(row):
     elif 'M' in row['Case Number']:
         row['Court'] = 'Circuit Court of Cook County'
         row['Division'] = 'Civil Division'
+    elif 'CI' in row['Case Number']:
+        row['Court'] = 'Unkown'
+        row['Division'] = 'Unkown'
     elif 'C' in row['Case Number']:
         row['Court'] = 'US District Court for the Northern District of Illinois'
         row['Division'] = 'Civil Case'
+        case_num = row['Case Number'].split('C')[0]
+        case_num = case_num.strip()
+        case_num = case_num.strip('-')
+        case_num = int(case_num)
+        if case_num < 50:
+            case_num += 2000
+            row['Year Filed'] = case_num
+        else:
+            case_num += 1900
+            row['Year Filed'] = case_num
     return row    
 
 
@@ -148,7 +164,22 @@ def combine_all_dfs():
     df_total.loc[police_cases, 'Primary Cause'].fillna('Other', inplace=True)
     #Saves the cases to csvs
     df_total.to_csv(ALL_SUITS_CSV_NAME, index=False)
-    df_total[police_cases].to_csv(ALL_POLICE_SUITS_CSV, index=False)
+    df_total = df_total[police_cases]
+    df_total['Case Number'].fillna('missing', inplace=True)
+    df_total['Court'] = 'other'
+    df_total['Division'] = 'other'
+    df_total['Year Filed'] = 0
+    df_total = df_total.apply(venue_finder, axis=1, result_type='expand')
+    df_total.to_csv(ALL_POLICE_SUITS_CSV, index=False)
+
+    federal_df = df_total[df_total['Year Filed'] > 0]
+    federal_df.to_csv(FEDERAL_SUITS_CSV, index=False)
+    #federal_df.groupby('Year Filed').agg({})
+    #grouped = federal_df.groupby(['Year Filed']).agg(['count','nunique', 'mean']).reset_index()
+    grouped = federal_df.groupby(['Year Filed']).agg({'Case Number':'nunique', 'Total Paid':'mean','Total Paid':'median'}).reset_index()
+
+    grouped.to_csv('agged'+FEDERAL_SUITS_CSV, index=False)
+    #df_total.groupby()
     
     
 
