@@ -5,7 +5,8 @@ import numpy as np
 from os import path
 
 #Years to load files for - 2008 excluded
-YEAR_RANGE = range(2009, 2019)
+CPD_SUITS_04_to_18_FILE = "Raw_FOIA_Data/cpd_2004to2018.xlsx"
+CPD_SUITS_04_to_18_SHEET = 'A'
 PENDING_POLICE_CASES_EXCEL = "Raw_FOIA_Data/4.F_Pending_Police_Cases_Report.xlsx"
 PENDING_EXCEL_SHEET = "Attorney Caseload"
 EXCEL_SHEET = "Payments"
@@ -14,6 +15,11 @@ FILE_BASE = "_Payments.xlsx"
 ALL_SUITS_CSV_NAME = "all_lawsuits_2008_to_2018.csv"
 ALL_POLICE_SUITS_CSV = "police_lawsuits_2008_to_2018.csv"
 #Dictionary Reducing the Primary cause catagories for police lawsuits
+
+
+def load_CPD_Suits_04_to_18():
+    CPD_suits_4_to_18_df = pd.read_excel(CPD_SUITS_04_to_18_FILE, CPD_SUITS_04_to_18_SHEET)
+    return CPD_suits_4_to_18_df
 
 def process_pending_cases():
     '''
