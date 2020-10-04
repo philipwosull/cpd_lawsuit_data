@@ -1,5 +1,5 @@
 # This file cleans and combines all the yearly reports
-# on costs related to settlements and judgements against the 
+# on costs related to settlements and judgements against the
 # City of Chicago into one csv
 # https://www.chicago.gov/city/en/depts/dol.html
 
@@ -8,13 +8,15 @@ import numpy as np
 from os import path
 
 #Years to load files for - 2008 excluded
-YEAR_RANGE = range(2009, 2019)
+YEAR_RANGE = range(2009, 2020)
 EXCEL_SHEET = "Payments"
 FILE_LOCATION = "Law_Website_Raw_Data/"
 FILE_BASE = "_Payments.xlsx"
-ALL_SUITS_CSV_NAME = "all_lawsuits_2008_to_2018.csv"
-ALL_POLICE_SUITS_CSV = "police_lawsuits_2008_to_2018.xlsx"
+ALL_SUITS_XLSX_NAME = "all_lawsuits_2008_to_2019.xlsx"
+ALL_POLICE_SUITS_XLSX = "police_lawsuits_2008_to_2019.xlsx"
 FEDERAL_SUITS_CSV = "federal_police_lawsuits_2008_to_2018.csv"
+HAS_C_BUT_NOT_FEDERAL_DOCKET = ['Cl','CH','CI', 'FCRL', 'PRE LIT']
+
 #Dictionary Reducing the Primary cause catagories for police lawsuits
 CAUSES = {
     "False Arrest":['FALSE ARREST'],
@@ -77,8 +79,10 @@ def load_annual_sheet(excel_file, sheet_name):
     df["City Department Involved"] = df["City Department Involved"].str.replace(' 0931', '')
     df["Primary Cause"] = df["Primary Cause"].str.replace(u'\xa0', u' ')
     df["Primary Cause"] = df["Primary Cause"].str.strip()
+    df["Case Number"] = df["Case Number"].str.replace(u'\xa0', u' ')
+    df["Case Number"] = df["Case Number"].str.strip()
     df['Disposition'] = df['Disposition'].str.replace(u'\xa0', u' ')
-    df['Disposition'] = df['Disposition'].str.strip()    
+    df['Disposition'] = df['Disposition'].str.strip()
     
     #Seperates month and year column
     df["Date to Comptroller"] = pd.to_datetime(df["Date to Comptroller"])
@@ -109,19 +113,13 @@ def load_annual_sheet(excel_file, sheet_name):
 
 def venue_finder(row):
     '''
-    Takes a row of a payments dataframe and puts the appropriate 
+    Takes a row of a payments dataframe and puts the appropriate
     court and division for the instance
     '''
-    if 'L' in row['Case Number']:
-        row['Court'] = 'Circuit Court of Cook County'
-        row['Division'] = 'Law Division'
-    elif 'M' in row['Case Number']:
-        row['Court'] = 'Circuit Court of Cook County'
-        row['Division'] = 'Civil Division'
-    elif 'CI' in row['Case Number']:
-        row['Court'] = 'Unkown'
-        row['Division'] = 'Unkown'
-    elif 'C' in row['Case Number']:
+    if 'C' in row['Case Number']:
+        for bad_string in HAS_C_BUT_NOT_FEDERAL_DOCKET:
+            if bad_string in row['Case Number']:
+                return row
         row['Court'] = 'US District Court for the Northern District of Illinois'
         row['Division'] = 'Civil Case'
         case_num = row['Case Number'].split('C')[0]
@@ -134,15 +132,18 @@ def venue_finder(row):
         else:
             case_num += 1900
             row['Year Filed'] = case_num
-    return row    
-
-
-
+    if 'L' in row['Case Number']:
+        row['Court'] = 'Circuit Court of Cook County'
+        row['Division'] = 'Law Division'
+    if 'M' in row['Case Number']:
+        row['Court'] = 'Circuit Court of Cook County'
+        row['Division'] = 'Civil Division'
+    return row
 
 def combine_all_dfs():
     '''
     Loads and merges dataframes for each year in year range
-    plus 2008 and saves it to a CSV with all suits and just 
+    plus 2008 and saves it to a CSV with all suits and just
     police ones
 
     Inputs:
@@ -163,15 +164,15 @@ def combine_all_dfs():
     df_total.loc[police_cases, 'Primary Cause'].map(CAUSE_MAP)
     df_total.loc[police_cases, 'Primary Cause'].fillna('Other', inplace=True)
     #Saves the cases to csvs
-    df_total.to_csv(ALL_SUITS_CSV_NAME, index=False)
+    df_total.to_excel(ALL_SUITS_XLSX_NAME, index=False)
     df_total = df_total[police_cases]
     df_total['Case Number'].fillna('missing', inplace=True)
     df_total['Court'] = 'other'
     df_total['Division'] = 'other'
-    df_total['Year Filed'] = 0
+    df_total['Year Filed'] = np.NaN
     df_total = df_total.apply(venue_finder, axis=1, result_type='expand')
-    df_total.to_csv(ALL_POLICE_SUITS_CSV, index=False)
-
+    df_total.to_excel(ALL_POLICE_SUITS_XLSX, index=False)
+    return df_total
     federal_df = df_total[df_total['Year Filed'] > 0]
     federal_df.to_csv(FEDERAL_SUITS_CSV, index=False)
     #federal_df.groupby('Year Filed').agg({})
