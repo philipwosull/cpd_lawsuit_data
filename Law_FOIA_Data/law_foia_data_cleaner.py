@@ -14,12 +14,49 @@ FILE_LOCATION = "Law_Website_Raw_Data/"
 FILE_BASE = "_Payments.xlsx"
 ALL_SUITS_CSV_NAME = "all_lawsuits_2008_to_2018.csv"
 ALL_POLICE_SUITS_CSV = "police_lawsuits_2008_to_2018.csv"
+
+
+
+#New column names 
+CASE_NUM = 'Case Number'
+PAYEE = 'Payee'
+PAYMENT_AMOUNT = 'Payment_Amount'
+FEES_AND_COSTS = 'Fees_and_Costs'
+PRIMARY_CAUSE = 'Primary_Cause'
+CITY_DEPARTMENT = 'Department'
+PAYMENT_FUND = 'Payment_Fund'
+DISPOSITION = 'Disposition'
+DATE_TO_COMPTROLLER = 'Date_to_Comptroller'
+
+
+#Specific to CPD suits sheet
+BURGE_RELATED = 'Burge_Related'
+CPD_SUITS_COLS = [CASE_NUM, PAYEE, PAYMENT_AMOUNT, FEES_AND_COSTS,
+PRIMARY_CAUSE, CITY_DEPARTMENT, PAYMENT_FUND, DISPOSITION, 
+DATE_TO_COMPTROLLER]
 #Dictionary Reducing the Primary cause catagories for police lawsuits
 
 
+def find_burge_related(primary_cause):
+    '''
+    Takes a row and checks if the primary cause columns contains the
+    word Burge
+    '''
+    if 'BURGE' in primary_cause:
+        return True
+    else:
+        return False
+
 def load_CPD_Suits_04_to_18():
-    CPD_suits_4_to_18_df = pd.read_excel(CPD_SUITS_04_to_18_FILE, CPD_SUITS_04_to_18_SHEET)
-    return CPD_suits_4_to_18_df
+    #load df and skip first 5 rows
+    CPD_suits_df = pd.read_excel(CPD_SUITS_04_to_18_FILE, 
+        CPD_SUITS_04_to_18_SHEET, skiprows = 5)
+    CPD_suits_df.drop(CPD_suits_df.tail(3).index, inplace=True)
+    #rename columns
+    CPD_suits_df.columns = CPD_SUITS_COLS
+    CPD_suits_df[BURGE_RELATED] = None
+    CPD_suits_df[BURGE_RELATED] = CPD_suits_df[PRIMARY_CAUSE].map(find_burge_related, na_action = 'ignore')
+    return CPD_suits_df
 
 def process_pending_cases():
     '''
