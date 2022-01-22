@@ -1,4 +1,4 @@
-# CPD_Lawsuits
+# cpd_lawsuit_data
 ## What is this?
 This repository contains data on lawsuits filed against the Chicago Police Department (CPD) and its officers and payments stemming from those lawsuits. It also contains code which transforms and processes the raw data into an easy to work with analysis dataset.
 
