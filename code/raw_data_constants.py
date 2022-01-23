@@ -1,9 +1,47 @@
 # Philip O'Sullivan
-""" This module contains constants for processing the law department data
-from raw files to csv formatted versions of the raw data
+""" This module contains constants for processing the raw data from various
+sources into csv formatted versions which can be easily worked with by
+standard data processing libraries
 """
 
-# File Constants
+##############################################################
+# ------------------------------------------------------------
+# Filename Related Constants
+# - Constant values for loading and saving files
+# ------------------------------------------------------------
+##############################################################
+
+# ------------------------------------------------------------
+# FOIA Data Filename Constants
+# ------------------------------------------------------------
+# unmodified raw file names
+RAW_TORT_PAYMENTS_2001_TO_2007_FOIA_DATA_EXCEL_FILE = (
+    "tort payments 2001 to 12312007.xlsx"
+)
+RAW_TORT_PAYMENTS_2001_TO_2007_FOIA_DATA_EXCEL_SHEET = "A"
+RAW_CPD_PAYMENTS_2004_TO_2018_FOIA_DATA_EXCEL_FILE = "cpd_2004to2018.xlsx"
+RAW_CPD_PAYMENTS_2004_TO_2018_FOIA_DATA_EXCEL_SHEET = "A"
+RAW_PENDING_POLICE_SUITS_FOIA_DATA_EXCEL_FILE = "4.F_Pending_Police_Cases_Report.xlsx"
+RAW_PENDING_POLICE_SUITS_FOIA_DATA_EXCEL_SHEET = "Attorney Caseload"
+RAW_QUARTERLY_POLICE_SUIT_DISP_FOIA_DATA_EXCEL_FILE = (
+    "5-D_Quarterly_Police_Case_Dispositions.xlsx"
+)
+RAW_QUARTERLY_POLICE_SUIT_DISP_FOIA_DATA_EXCEL_SHEET = "Quarterly Police Case Dispositi"
+
+# csv formatted raw file names
+RAW_CSV_FORMATTED_TORT_PAYMENTS_2001_TO_2007_FOIA_DATA_CSV = (
+    "raw_csv_formatted_tort_payments_2001_to_2007_foia_data.csv"
+)
+RAW_CSV_FORMATTED_CPD_PAYMENTS_2004_TO_2018_FOIA_DATA_CSV = (
+    "raw_csv_formatted_cpd_payments_2004_to_2018_foia_data.csv"
+)
+RAW_CSV_FORMATTED_PENDING_POLICE_SUITS_FOTA_DATA_CSV = (
+    "raw_csv_formatted_pending_police_lawsuits_foia_data.csv"
+)
+
+# ------------------------------------------------------------
+# Law Website Data Filename Constants
+# ------------------------------------------------------------
 
 # Raw data file and sheet names
 RAW_2008_LAW_WEBSITE_DATA_PDF = "2008expendituresthrough12312008.pdf"
@@ -55,7 +93,7 @@ RAW_CSV_FORMATTED_2012_LAW_WEBSITE_DATA_CSV = (
 RAW_CSV_FORMATTED_2013_LAW_WEBSITE_DATA_CSV = (
     "raw_csv_formatted_2013_law_website_data.csv"
 )
-RAW_CSV_FORMATTED__2014_LAW_WEBSITE_DATA_CSV = (
+RAW_CSV_FORMATTED_2014_LAW_WEBSITE_DATA_CSV = (
     "raw_csv_formatted_2014_law_website_data.csv"
 )
 RAW_CSV_FORMATTED_2015_LAW_WEBSITE_DATA_CSV = (

@@ -16,7 +16,7 @@ import numpy as np
 import camelot
 
 # Repo specific
-import raw_law_website_data_constants as raw_law_constants
+import raw_data_constants as RAW_C
 import directory_constants as DIR_C
 import util
 
@@ -31,7 +31,7 @@ def process_2008_law_website_data() -> pd.DataFrame:
     """
     # get the path to the pdf
     raw_2008_pdf_path = DIR_C.RAW_UNMODIFIED_LAW_WEBSITE_DATA_DIR.joinpath(
-        raw_law_constants.RAW_2008_LAW_WEBSITE_DATA_PDF
+        RAW_C.RAW_2008_LAW_WEBSITE_DATA_PDF
     )
     # use camelot to convert the first 55 pages tables to dataframes
     tables = camelot.read_pdf(filepath=str(raw_2008_pdf_path), pages="1-55")
@@ -57,7 +57,7 @@ def process_2008_law_website_data() -> pd.DataFrame:
             "CITY DEPARTMENT INVOLVED": str,
             "DISPOSITION": str,
             "DATE TO COMPTROLLER": np.datetime64,
-            "tort_status": str,
+            "Tort Status": str,
             "pdf_page_num": int,
         }
     )
@@ -93,7 +93,7 @@ def process_2008_law_website_data() -> pd.DataFrame:
         # check the first row is just the header values in one cell
         if page_num == 1:
             assert table_df.shape == (44, 8)
-            table_df["tort_status"] = "TORT"
+            table_df["Tort Status"] = "TORT"
         # special rules for last page
         elif page_num == last_page:
             assert table_df.shape == (47, 8)
@@ -103,8 +103,8 @@ def process_2008_law_website_data() -> pd.DataFrame:
                 "TOTAL JUDGMENT/VERDICTS & "
                 "SETTLEMENTS \n129,670,864 \nTOTAL FEES AND COSTS \n6,903,180"
             )
-            table_df.loc[:37, "tort_status"] = "TORT"
-            table_df.loc[37:, "tort_status"] = "NON-TORT"
+            table_df.loc[:37, "Tort Status"] = "TORT"
+            table_df.loc[37:, "Tort Status"] = "NON-TORT"
             # drop the non tort lable row and the last one
             table_df = table_df.drop(index=[37, 47])
         else:
@@ -113,7 +113,7 @@ def process_2008_law_website_data() -> pd.DataFrame:
                 assert table_df.shape == (49, 8)
             else:
                 assert table_df.shape == (50, 8)
-            table_df["tort_status"] = "TORT"
+            table_df["Tort Status"] = "TORT"
 
         table_df["pdf_page_num"] = page_num
 
@@ -151,11 +151,10 @@ def process_2008_law_website_data() -> pd.DataFrame:
     raw_2008_df = util.strip_and_trim_whitespace(raw_2008_df)
 
     # save to csv
-    raw_2008_df.to_csv(
-        DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_CSV_FORMATTED_2008_LAW_WEBSITE_DATA_CSV
-        ),
-        index=False,
+    util.save_df(
+        df=raw_2008_df,
+        file_name=RAW_C.RAW_CSV_FORMATTED_2008_LAW_WEBSITE_DATA_CSV,
+        save_dir=DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR,
     )
 
     return raw_2008_df
@@ -168,7 +167,7 @@ def process_2009_law_website_data() -> pd.DataFrame:
     """
     # get the path to the pdf
     raw_2009_pdf_path = DIR_C.RAW_UNMODIFIED_LAW_WEBSITE_DATA_DIR.joinpath(
-        raw_law_constants.RAW_2009_LAW_WEBSITE_DATA_PDF
+        RAW_C.RAW_2009_LAW_WEBSITE_DATA_PDF
     )
     # use camelot to convert the first 21 pages tables to dataframes
     tables = camelot.read_pdf(filepath=str(raw_2009_pdf_path), pages="1-21")
@@ -189,7 +188,7 @@ def process_2009_law_website_data() -> pd.DataFrame:
             "CITY DEPARTMENT INVOLVED": str,
             "DISPOSITION": str,
             "DATE TO COMPTROLLER": np.datetime64,
-            "tort_status": str,
+            "Tort Status": str,
             "pdf_page_num": int,
         }
     )
@@ -230,14 +229,14 @@ def process_2009_law_website_data() -> pd.DataFrame:
             # now drop that first row
             table_df = table_df.drop(index=[0])
             assert table_df.shape == (46, 8)
-            table_df["tort_status"] = "TORT"
+            table_df["Tort Status"] = "TORT"
         # special rule for page 20 where there is a split of tort and non-tort
         elif page_num == 20:
             assert table_df.loc[25].iloc[0] == "NON-TORT"
             table_df = table_df.drop(index=[25])
             assert table_df.shape == (54, 8)
-            table_df.loc[:25, "tort_status"] = "TORT"
-            table_df.loc[25:, "tort_status"] = "NON-TORT"
+            table_df.loc[:25, "Tort Status"] = "TORT"
+            table_df.loc[25:, "Tort Status"] = "NON-TORT"
         # special rules for last page
         elif page_num == last_page:
             assert table_df.shape == (47, 8)
@@ -247,12 +246,12 @@ def process_2009_law_website_data() -> pd.DataFrame:
                 "SETTLEMENTS \n51,155,053 \nTOTAL FEES AND COSTS \n7,660,924 "
                 "\nTOTAL JUDGMENT/VERDICTS, SETTLEMENTS, FEES AND COSTS \n58,815,977"
             )
-            table_df["tort_status"] = "NON-TORT"
+            table_df["Tort Status"] = "NON-TORT"
             # drop the non tort lable row and the last one
             table_df = table_df.drop(index=[46])
         else:
             assert table_df.shape == (55, 8)
-            table_df["tort_status"] = "TORT"
+            table_df["Tort Status"] = "TORT"
         # add a page number
         table_df["pdf_page_num"] = page_num
 
@@ -296,11 +295,10 @@ def process_2009_law_website_data() -> pd.DataFrame:
     # do whitespace fixing
     raw_2009_df = util.strip_and_trim_whitespace(raw_2009_df)
 
-    raw_2009_df.to_csv(
-        DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_CSV_FORMATTED_2009_LAW_WEBSITE_DATA_CSV
-        ),
-        index=False,
+    util.save_df(
+        df=raw_2009_df,
+        file_name=RAW_C.RAW_CSV_FORMATTED_2009_LAW_WEBSITE_DATA_CSV,
+        save_dir=DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR,
     )
 
     return raw_2009_df
@@ -314,9 +312,9 @@ def process_2010_law_website_data() -> pd.DataFrame:
     # also make the first unskipped row the headers
     raw_2010_df = pd.read_excel(
         io=DIR_C.RAW_UNMODIFIED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_2010_LAW_WEBSITE_DATA_EXCEL_FILE
+            RAW_C.RAW_2010_LAW_WEBSITE_DATA_EXCEL_FILE
         ),
-        sheet_name=raw_law_constants.RAW_2010_LAW_WEBSITE_DATA_EXCEL_SHEET,
+        sheet_name=RAW_C.RAW_2010_LAW_WEBSITE_DATA_EXCEL_SHEET,
         header=1,
         skiprows=4,
         skipfooter=3,
@@ -327,11 +325,10 @@ def process_2010_law_website_data() -> pd.DataFrame:
     # fix any whitespace issues
     raw_2010_df = util.strip_and_trim_whitespace(raw_2010_df)
 
-    raw_2010_df.to_csv(
-        DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_CSV_FORMATTED_2010_LAW_WEBSITE_DATA_CSV
-        ),
-        index=False,
+    util.save_df(
+        df=raw_2010_df,
+        file_name=RAW_C.RAW_CSV_FORMATTED_2010_LAW_WEBSITE_DATA_CSV,
+        save_dir=DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR,
     )
 
     return raw_2010_df
@@ -345,9 +342,9 @@ def process_2011_law_website_data() -> pd.DataFrame:
     # also make the first unskipped row the headers
     raw_2011_df = pd.read_excel(
         io=DIR_C.RAW_UNMODIFIED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_2011_LAW_WEBSITE_DATA_EXCEL_FILE
+            RAW_C.RAW_2011_LAW_WEBSITE_DATA_EXCEL_FILE
         ),
-        sheet_name=raw_law_constants.RAW_2011_LAW_WEBSITE_DATA_EXCEL_SHEET,
+        sheet_name=RAW_C.RAW_2011_LAW_WEBSITE_DATA_EXCEL_SHEET,
         header=1,
         skiprows=4,
         skipfooter=4,
@@ -358,11 +355,10 @@ def process_2011_law_website_data() -> pd.DataFrame:
     # fix any whitespace issues
     raw_2011_df = util.strip_and_trim_whitespace(raw_2011_df)
 
-    raw_2011_df.to_csv(
-        DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_CSV_FORMATTED_2011_LAW_WEBSITE_DATA_CSV
-        ),
-        index=False,
+    util.save_df(
+        df=raw_2011_df,
+        file_name=RAW_C.RAW_CSV_FORMATTED_2011_LAW_WEBSITE_DATA_CSV,
+        save_dir=DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR,
     )
 
     return raw_2011_df
@@ -376,9 +372,9 @@ def process_2012_law_website_data() -> pd.DataFrame:
     # also make the first unskipped row the headers
     raw_2012_df = pd.read_excel(
         io=DIR_C.RAW_UNMODIFIED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_2012_LAW_WEBSITE_DATA_EXCEL_FILE
+            RAW_C.RAW_2012_LAW_WEBSITE_DATA_EXCEL_FILE
         ),
-        sheet_name=raw_law_constants.RAW_2012_LAW_WEBSITE_DATA_EXCEL_SHEET,
+        sheet_name=RAW_C.RAW_2012_LAW_WEBSITE_DATA_EXCEL_SHEET,
         header=1,
         skiprows=4,
         skipfooter=6,
@@ -390,19 +386,18 @@ def process_2012_law_website_data() -> pd.DataFrame:
     assert raw_2012_df.loc[0, "CASE #"] == "TORT"
     assert raw_2012_df.loc[909, "CASE #"] == "NON-TORT"
 
-    raw_2012_df.loc[0:909, raw_law_constants.TORT_STATUS_COL] = "TORT"
-    raw_2012_df.loc[909:, raw_law_constants.TORT_STATUS_COL] = "NON-TORT"
+    raw_2012_df.loc[0:909, "Tort Status"] = "TORT"
+    raw_2012_df.loc[909:, "Tort Status"] = "NON-TORT"
 
     raw_2012_df.drop(index=[0, 909], inplace=True)
 
     # fix any whitespace issues
     raw_2012_df = util.strip_and_trim_whitespace(raw_2012_df)
 
-    raw_2012_df.to_csv(
-        DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_CSV_FORMATTED_2012_LAW_WEBSITE_DATA_CSV
-        ),
-        index=False,
+    util.save_df(
+        df=raw_2012_df,
+        file_name=RAW_C.RAW_CSV_FORMATTED_2012_LAW_WEBSITE_DATA_CSV,
+        save_dir=DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR,
     )
 
     return raw_2012_df
@@ -416,9 +411,9 @@ def process_2013_law_website_data() -> pd.DataFrame:
     # also make the first unskipped row the headers
     raw_2013_df = pd.read_excel(
         io=DIR_C.RAW_UNMODIFIED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_2013_LAW_WEBSITE_DATA_EXCEL_FILE
+            RAW_C.RAW_2013_LAW_WEBSITE_DATA_EXCEL_FILE
         ),
-        sheet_name=raw_law_constants.RAW_2013_LAW_WEBSITE_DATA_EXCEL_SHEET,
+        sheet_name=RAW_C.RAW_2013_LAW_WEBSITE_DATA_EXCEL_SHEET,
         header=1,
         skiprows=4,
         skipfooter=4,
@@ -432,11 +427,10 @@ def process_2013_law_website_data() -> pd.DataFrame:
     # fix any whitespace issues
     raw_2013_df = util.strip_and_trim_whitespace(raw_2013_df)
 
-    raw_2013_df.to_csv(
-        DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_CSV_FORMATTED_2013_LAW_WEBSITE_DATA_CSV
-        ),
-        index=False,
+    util.save_df(
+        df=raw_2013_df,
+        file_name=RAW_C.RAW_CSV_FORMATTED_2013_LAW_WEBSITE_DATA_CSV,
+        save_dir=DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR,
     )
 
     return raw_2013_df
@@ -450,9 +444,9 @@ def process_2014_law_website_data() -> pd.DataFrame:
     # also make the first unskipped row the headers
     raw_2014_df = pd.read_excel(
         io=DIR_C.RAW_UNMODIFIED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_2014_LAW_WEBSITE_DATA_EXCEL_FILE
+            RAW_C.RAW_2014_LAW_WEBSITE_DATA_EXCEL_FILE
         ),
-        sheet_name=raw_law_constants.RAW_2014_LAW_WEBSITE_DATA_EXCEL_SHEET,
+        sheet_name=RAW_C.RAW_2014_LAW_WEBSITE_DATA_EXCEL_SHEET,
         header=1,
         skiprows=3,
         skipfooter=654,
@@ -470,11 +464,10 @@ def process_2014_law_website_data() -> pd.DataFrame:
     # fix any whitespace issues
     raw_2014_df = util.strip_and_trim_whitespace(raw_2014_df)
 
-    raw_2014_df.to_csv(
-        DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_CSV_FORMATTED__2014_LAW_WEBSITE_DATA_CSV
-        ),
-        index=False,
+    util.save_df(
+        df=raw_2014_df,
+        file_name=RAW_C.RAW_CSV_FORMATTED_2014_LAW_WEBSITE_DATA_CSV,
+        save_dir=DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR,
     )
 
     return raw_2014_df
@@ -488,9 +481,9 @@ def process_2015_law_website_data() -> pd.DataFrame:
     # also make the first unskipped row the headers
     raw_2015_df = pd.read_excel(
         io=DIR_C.RAW_UNMODIFIED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_2015_LAW_WEBSITE_DATA_EXCEL_FILE
+            RAW_C.RAW_2015_LAW_WEBSITE_DATA_EXCEL_FILE
         ),
-        sheet_name=raw_law_constants.RAW_2015_LAW_WEBSITE_DATA_EXCEL_SHEET,
+        sheet_name=RAW_C.RAW_2015_LAW_WEBSITE_DATA_EXCEL_SHEET,
         header=1,
         skiprows=4,
         skipfooter=6,
@@ -504,11 +497,10 @@ def process_2015_law_website_data() -> pd.DataFrame:
     # fix any whitespace issues
     raw_2015_df = util.strip_and_trim_whitespace(raw_2015_df)
 
-    raw_2015_df.to_csv(
-        DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_CSV_FORMATTED_2015_LAW_WEBSITE_DATA_CSV
-        ),
-        index=False,
+    util.save_df(
+        df=raw_2015_df,
+        file_name=RAW_C.RAW_CSV_FORMATTED_2015_LAW_WEBSITE_DATA_CSV,
+        save_dir=DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR,
     )
 
     return raw_2015_df
@@ -522,9 +514,9 @@ def process_2016_law_website_data() -> pd.DataFrame:
     # also make the first unskipped row the headers
     raw_2016_df = pd.read_excel(
         io=DIR_C.RAW_UNMODIFIED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_2016_LAW_WEBSITE_DATA_EXCEL_FILE
+            RAW_C.RAW_2016_LAW_WEBSITE_DATA_EXCEL_FILE
         ),
-        sheet_name=raw_law_constants.RAW_2016_LAW_WEBSITE_DATA_EXCEL_SHEET,
+        sheet_name=RAW_C.RAW_2016_LAW_WEBSITE_DATA_EXCEL_SHEET,
         header=1,
         skiprows=4,
         skipfooter=6,
@@ -538,11 +530,10 @@ def process_2016_law_website_data() -> pd.DataFrame:
     # fix any whitespace issues
     raw_2016_df = util.strip_and_trim_whitespace(raw_2016_df)
 
-    raw_2016_df.to_csv(
-        DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_CSV_FORMATTED_2016_LAW_WEBSITE_DATA_CSV
-        ),
-        index=False,
+    util.save_df(
+        df=raw_2016_df,
+        file_name=RAW_C.RAW_CSV_FORMATTED_2016_LAW_WEBSITE_DATA_CSV,
+        save_dir=DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR,
     )
 
     return raw_2016_df
@@ -556,9 +547,9 @@ def process_2017_law_website_data() -> pd.DataFrame:
     # also make the first unskipped row the headers
     raw_2017_df = pd.read_excel(
         io=DIR_C.RAW_UNMODIFIED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_2017_LAW_WEBSITE_DATA_EXCEL_FILE
+            RAW_C.RAW_2017_LAW_WEBSITE_DATA_EXCEL_FILE
         ),
-        sheet_name=raw_law_constants.RAW_2017_LAW_WEBSITE_DATA_EXCEL_SHEET,
+        sheet_name=RAW_C.RAW_2017_LAW_WEBSITE_DATA_EXCEL_SHEET,
         header=1,
         skiprows=4,
         skipfooter=6,
@@ -572,11 +563,10 @@ def process_2017_law_website_data() -> pd.DataFrame:
     # fix any whitespace issues
     raw_2017_df = util.strip_and_trim_whitespace(raw_2017_df)
 
-    raw_2017_df.to_csv(
-        DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_CSV_FORMATTED_2017_LAW_WEBSITE_DATA_CSV
-        ),
-        index=False,
+    util.save_df(
+        df=raw_2017_df,
+        file_name=RAW_C.RAW_CSV_FORMATTED_2017_LAW_WEBSITE_DATA_CSV,
+        save_dir=DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR,
     )
 
     return raw_2017_df
@@ -590,9 +580,9 @@ def process_2018_law_website_data() -> pd.DataFrame:
     # also make the first unskipped row the headers
     raw_2018_df = pd.read_excel(
         io=DIR_C.RAW_UNMODIFIED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_2018_LAW_WEBSITE_DATA_EXCEL_FILE
+            RAW_C.RAW_2018_LAW_WEBSITE_DATA_EXCEL_FILE
         ),
-        sheet_name=raw_law_constants.RAW_2018_LAW_WEBSITE_DATA_EXCEL_SHEET,
+        sheet_name=RAW_C.RAW_2018_LAW_WEBSITE_DATA_EXCEL_SHEET,
         header=1,
         skiprows=4,
         skipfooter=6,
@@ -606,11 +596,10 @@ def process_2018_law_website_data() -> pd.DataFrame:
     # fix any whitespace issues
     raw_2018_df = util.strip_and_trim_whitespace(raw_2018_df)
 
-    raw_2018_df.to_csv(
-        DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_CSV_FORMATTED_2018_LAW_WEBSITE_DATA_CSV
-        ),
-        index=False,
+    util.save_df(
+        df=raw_2018_df,
+        file_name=RAW_C.RAW_CSV_FORMATTED_2018_LAW_WEBSITE_DATA_CSV,
+        save_dir=DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR,
     )
 
     return raw_2018_df
@@ -624,9 +613,9 @@ def process_2019_law_website_data() -> pd.DataFrame:
     # also make the first unskipped row the headers
     raw_2019_df = pd.read_excel(
         io=DIR_C.RAW_UNMODIFIED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_2019_LAW_WEBSITE_DATA_EXCEL_FILE
+            RAW_C.RAW_2019_LAW_WEBSITE_DATA_EXCEL_FILE
         ),
-        sheet_name=raw_law_constants.RAW_2019_LAW_WEBSITE_DATA_EXCEL_SHEET,
+        sheet_name=RAW_C.RAW_2019_LAW_WEBSITE_DATA_EXCEL_SHEET,
         header=1,
         skiprows=4,
         skipfooter=7,
@@ -640,11 +629,10 @@ def process_2019_law_website_data() -> pd.DataFrame:
     # fix any whitespace issues
     raw_2019_df = util.strip_and_trim_whitespace(raw_2019_df)
 
-    raw_2019_df.to_csv(
-        DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_CSV_FORMATTED_2019_LAW_WEBSITE_DATA_CSV
-        ),
-        index=False,
+    util.save_df(
+        df=raw_2019_df,
+        file_name=RAW_C.RAW_CSV_FORMATTED_2019_LAW_WEBSITE_DATA_CSV,
+        save_dir=DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR,
     )
 
     return raw_2019_df
@@ -658,9 +646,9 @@ def process_2020_law_website_data() -> pd.DataFrame:
     # also make the first unskipped row the headers
     raw_2020_df = pd.read_excel(
         io=DIR_C.RAW_UNMODIFIED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_2020_LAW_WEBSITE_DATA_EXCEL_FILE
+            RAW_C.RAW_2020_LAW_WEBSITE_DATA_EXCEL_FILE
         ),
-        sheet_name=raw_law_constants.RAW_2020_LAW_WEBSITE_DATA_EXCEL_SHEET,
+        sheet_name=RAW_C.RAW_2020_LAW_WEBSITE_DATA_EXCEL_SHEET,
         header=1,
         skiprows=4,
         skipfooter=6,
@@ -674,11 +662,10 @@ def process_2020_law_website_data() -> pd.DataFrame:
     # fix any whitespace issues
     raw_2020_df = util.strip_and_trim_whitespace(raw_2020_df)
 
-    raw_2020_df.to_csv(
-        DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_CSV_FORMATTED_2020_LAW_WEBSITE_DATA_CSV
-        ),
-        index=False,
+    util.save_df(
+        df=raw_2020_df,
+        file_name=RAW_C.RAW_CSV_FORMATTED_2020_LAW_WEBSITE_DATA_CSV,
+        save_dir=DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR,
     )
 
     return raw_2020_df
@@ -692,9 +679,9 @@ def process_2021_law_website_data() -> pd.DataFrame:
     # also make the first unskipped row the headers
     raw_2021_df = pd.read_excel(
         io=DIR_C.RAW_UNMODIFIED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_2021_LAW_WEBSITE_DATA_EXCEL_FILE
+            RAW_C.RAW_2021_LAW_WEBSITE_DATA_EXCEL_FILE
         ),
-        sheet_name=raw_law_constants.RAW_2021_LAW_WEBSITE_DATA_EXCEL_SHEET,
+        sheet_name=RAW_C.RAW_2021_LAW_WEBSITE_DATA_EXCEL_SHEET,
         header=1,
         skiprows=4,
         skipfooter=7,
@@ -710,11 +697,10 @@ def process_2021_law_website_data() -> pd.DataFrame:
     # fix any whitespace issues
     raw_2021_df = util.strip_and_trim_whitespace(raw_2021_df)
 
-    raw_2021_df.to_csv(
-        DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR.joinpath(
-            raw_law_constants.RAW_CSV_FORMATTED_2021_LAW_WEBSITE_DATA_CSV
-        ),
-        index=False,
+    util.save_df(
+        df=raw_2021_df,
+        file_name=RAW_C.RAW_CSV_FORMATTED_2021_LAW_WEBSITE_DATA_CSV,
+        save_dir=DIR_C.RAW_CSV_FORMATTED_LAW_WEBSITE_DATA_DIR,
     )
 
     return raw_2021_df

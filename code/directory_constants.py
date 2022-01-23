@@ -19,6 +19,19 @@ CODE_DIR = REPO_DIR / CODE_FOLDER
 RAW_DATA_FOLDER = "raw_data"
 RAW_DATA_DIR = REPO_DIR / RAW_DATA_FOLDER
 
+# Raw foia data directory
+RAW_FOIA_DATA_FOLDER = "foia_data"
+RAW_FOIA_DATA_DIR = RAW_DATA_DIR / RAW_FOIA_DATA_FOLDER
+
+# unmodified raw law department website data directory
+RAW_UNMODIFIED_FOIA_DATA_FOLDER = "unmodified_raw_foia_data"
+RAW_UNMODIFIED_FOIA_DATA_DIR = RAW_FOIA_DATA_DIR / RAW_UNMODIFIED_FOIA_DATA_FOLDER
+
+# csv formatted raw law department website data directory
+RAW_CSV_FORMATTED_FOIA_DATA_FOLDER = "csv_formatted_raw_foia_data"
+RAW_CSV_FORMATTED_FOIA_DATA_DIR = RAW_FOIA_DATA_DIR / RAW_CSV_FORMATTED_FOIA_DATA_FOLDER
+
+
 # Raw law department website data directory
 RAW_LAW_WEBSITE_DATA_FOLDER = "law_website_data"
 RAW_LAW_WEBSITE_DATA_DIR = RAW_DATA_DIR / RAW_LAW_WEBSITE_DATA_FOLDER
