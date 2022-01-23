@@ -26,7 +26,18 @@ RAW_PENDING_POLICE_SUITS_FOIA_DATA_EXCEL_SHEET = "Attorney Caseload"
 RAW_QUARTERLY_POLICE_SUIT_DISP_FOIA_DATA_EXCEL_FILE = (
     "5-D_Quarterly_Police_Case_Dispositions.xlsx"
 )
+RAW_QUARTERLY_POLICE_SUIT_DISP_FOIA_DATA_EXCEL_FILE = (
+    "5-D_Quarterly_Police_Case_Dispositions.xlsx"
+)
 RAW_QUARTERLY_POLICE_SUIT_DISP_FOIA_DATA_EXCEL_SHEET = "Quarterly Police Case Dispositi"
+RAW_QUARTERLY_MATTER_DISP_REPORT_FOIA_DATA_EXCEL_FILE = (
+    "5-C_Matter_Dispositions_Report.xlsx"
+)
+RAW_QUARTERLY_MATTER_DISP_REPORT_BY_DIVISION_FOIA_DATA_EXCEL_SHEET = "By Division"
+RAW_QUARTERLY_MATTER_DISP_REPORT_BY_DEPARTMENT_FOIA_DATA_EXCEL_SHEET = (
+    "By Client Department"
+)
+RAW_QUARTERLY_MATTER_DISP_REPORT_BY_ASSIGNEE_FOIA_DATA_EXCEL_SHEET = "By Main Assignee"
 
 # csv formatted raw file names
 RAW_CSV_FORMATTED_TORT_PAYMENTS_2001_TO_2007_FOIA_DATA_CSV = (
@@ -37,6 +48,18 @@ RAW_CSV_FORMATTED_CPD_PAYMENTS_2004_TO_2018_FOIA_DATA_CSV = (
 )
 RAW_CSV_FORMATTED_PENDING_POLICE_SUITS_FOTA_DATA_CSV = (
     "raw_csv_formatted_pending_police_lawsuits_foia_data.csv"
+)
+RAW_CSV_FORMATTED_QUARTERLY_POLICE_SUIT_DISP_FOIA_DATA_CSV = (
+    "raw_csv_formatted_quarterly_police_suit_dispositions_foia_data.csv"
+)
+RAW_CSV_FORMATTED_MATTER_DISP_REPORT_BY_DIVISION_FOIA_DATA_CSV = (
+    "raw_csv_formatted_matter_disposition_reports_by_division_foia_data.csv"
+)
+RAW_CSV_FORMATTED_MATTER_DISP_REPORT_BY_DEPARTMENT_FOIA_DATA_CSV = (
+    "raw_csv_formatted_matter_disposition_reports_by_department_foia_data.csv"
+)
+RAW_CSV_FORMATTED_MATTER_DISP_REPORT_BY_ASSIGNEE_FOIA_DATA_CSV = (
+    "raw_csv_formatted_matter_disposition_reports_by_assignee_foia_data.csv"
 )
 
 # ------------------------------------------------------------
