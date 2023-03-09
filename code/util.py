@@ -1,5 +1,6 @@
+""" Helper functions for CPD lawsuit data processing."""
 # Philip O'Sullivan
-# Helper functions for CPD Lawsuit data processing
+
 
 # stdlib imports
 import re
@@ -42,7 +43,7 @@ def load_df(
     else:
         raise NotImplementedError(
             "This function does not currently support the file extension "
-            + f"for {file_name}"
+            f"for {file_name}"
         )
 
     # now attempt to get a good dtype
@@ -79,7 +80,7 @@ def save_df(df: pd.DataFrame, file_name: str, save_dir: pathlib.Path) -> None:
     else:
         raise NotImplementedError(
             "This function does not currently support the file extension "
-            + f"for {file_name}"
+            f"for {file_name}"
         )
 
 

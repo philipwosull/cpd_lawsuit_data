@@ -140,3 +140,10 @@ RAW_CSV_FORMATTED_2020_LAW_WEBSITE_DATA_CSV = (
 RAW_CSV_FORMATTED_2021_LAW_WEBSITE_DATA_CSV = (
     "raw_csv_formatted_2021_law_website_data.csv"
 )
+
+
+# ------------------------------------------------------------
+# Archival Section 1983 Data Filename Constants
+# ------------------------------------------------------------
+RAW_ARCHIVAL_SECTION_1983_DATA_EXCEL_FILE = "raw_archival_section_1983_data.xlsx"
+RAW_ARCHIVAL_SECTION_1983_DATA_EXCEL_SHEET = "Round1"

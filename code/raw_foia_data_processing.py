@@ -1,4 +1,3 @@
-# Philip O'Sullivan
 """ This module has functions for transforming the raw data received from
 the foia requests into to easy to work with csvs saved in the uncleaned csv
 data folder. The only additional processing of the data is removing excess
